@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  backend:
+    image: maven:3.9.9-eclipse-temurin-17
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8080:8080"
+    command: mvn spring-boot:run
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8080
+    depends_on:
+      - backend
